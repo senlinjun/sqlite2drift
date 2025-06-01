@@ -9,7 +9,7 @@ sqlite_type2drift_type = {
     "TEXT": ("TextColumn", "text"),
     "BLOB": ("BlobColumn", "blob"),
     "REAL": ("RealColumn", "real"),
-    "NUMERIC": ("RealColumn", "real"),
+    "NUMERIC": ("TextColumn", "text"),
 }
 
 
@@ -101,8 +101,6 @@ def generateDartFile(db_name: str, out_file: typing.Union[str, None]) -> None:
                 if field["default"]:
                     if field["type"] == "INTEGER":
                         f.write(f'.withDefault(const Constant({field["default"]}))')
-                    elif field["type"] == "TEXT":
-                        f.write(f'.withDefault(const Constant("{field["default"]}"))')
                     elif field["type"] == "BLOB":
                         bytes_list = bytes.fromhex(field["default"][2:-1])
                         f.write(".withDefault(Constant(Uint8List.fromList([")
@@ -112,10 +110,12 @@ def generateDartFile(db_name: str, out_file: typing.Union[str, None]) -> None:
                             if index < len(bytes_list) - 1:
                                 f.write(",")
                         f.write("])))")
-                    else:  # REAL / NUMERIC
+                    elif field["type"] == "REAL":
                         f.write(
                             f'.withDefault(Constant({field["default"] if "." in field["default"] else field["default"]+".0"}))'
                         )
+                    else:  # TEXT / NUMERIC
+                        f.write(f'.withDefault(const Constant("{field["default"]}"))')
                 if field["name"] == table["autoincrement"]:
                     f.write(".autoIncrement()")
                 f.write("();\n")
