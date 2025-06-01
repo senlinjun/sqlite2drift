@@ -1,4 +1,4 @@
-import sqlite3, os,sys,getopt,typing
+import sqlite3, os, argparse, typing
 
 
 allow_characters = ["_"]
@@ -31,7 +31,7 @@ def safeCamelName(raw_name: str) -> str:
     return formated_name
 
 
-def generateDartFile(db_name: str,out_file:typing.Union[str,None]) -> None:
+def generateDartFile(db_name: str, out_file: typing.Union[str, None]) -> None:
     db = sqlite3.connect(db_name)
     cursor = db.cursor()
     cursor.execute("select name,sql from sqlite_master where type='table'")
@@ -39,7 +39,7 @@ def generateDartFile(db_name: str,out_file:typing.Union[str,None]) -> None:
     tables = {}
     for row in rows:
         name, sql = row
-        sql = sql.replace(", ",", \n\r")
+        sql = sql.replace(", ", ", \n\r")
         if name == "sqlite_sequence":
             continue
         formated_table_name = safeUpperCamelCaseName(name)
@@ -155,20 +155,12 @@ def generateDartFile(db_name: str,out_file:typing.Union[str,None]) -> None:
     else:
         os.system(f"dart format {out_file}")
 
+
 if __name__ == "__main__":
-    try:
-        opts,_ = getopt.getopt(sys.argv[1:],"hi:o:")
-    except getopt.GetoptError:
-        print("usage: sqlite2drift.py -i <inputfile> -o [outputfile]")
-        exit(1)
-    in_file = None
-    out_file = None
-    for opt,arg in opts:
-        if opt == "-i":
-            in_file = arg
-        elif opt == "-o":
-            out_file = arg
-    if not in_file:
-        print("usage: sqlite2drift.py -i <inputfile> [-o outputfile]")
-        exit(1)
-    generateDartFile(in_file,out_file)
+    parser = argparse.ArgumentParser(
+        description="This is a Python script that automatically converts SQLite database files into Dart files compatible with Flutter's Drift ORM."
+    )
+    parser.add_argument("input_file", help="the path of database file.")
+    parser.add_argument("-o", "--output", help="the path of generated .dart file")
+    args = parser.parse_args()
+    generateDartFile(args.input_file, args.output)

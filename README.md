@@ -23,10 +23,10 @@ This is a Python script that automatically converts SQLite database files into D
 
 ```bash
 # Basic usage (output file defaults to input filename + .dart)
-python sqlite2drift.py -i my_database.sqlite
+python sqlite2drift.py my_database.sqlite
 
 # Specify output file
-python sqlite2drift.py -i my_database.sqlite -o lib/database/app_db.dart
+python sqlite2drift.py my_database.sqlite -o lib/database/app_db.dart
 ```
 
 ## Future Plans

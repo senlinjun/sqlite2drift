@@ -23,10 +23,10 @@
 
 ```bash
 # 基本用法（输出文件默认为输入文件名+.dart）
-python sqlite2drift.py -i my_database.sqlite
+python sqlite2drift.py my_database.sqlite
 
 # 指定输出文件
-python sqlite2drift.py -i my_database.sqlite -o lib/database/app_db.dart
+python sqlite2drift.py my_database.sqlite -o lib/database/app_db.dart
 ```
 
 ## 未来计划
