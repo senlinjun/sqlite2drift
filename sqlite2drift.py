@@ -31,7 +31,7 @@ def safeCamelName(raw_name: str) -> str:
     return formated_name
 
 
-def generateDartFile(db_name: str, out_file: typing.Union[str, None]) -> None:
+def generateDartFile(db_name: str, out_file: typing.Union[str, None],use_flutter_plugin:None) -> None:
     db = sqlite3.connect(db_name)
     cursor = db.cursor()
     cursor.execute("select name,sql from sqlite_master where type='table'")
@@ -86,7 +86,10 @@ def generateDartFile(db_name: str, out_file: typing.Union[str, None]) -> None:
     basename = os.path.basename(db_name)
     filename = ".".join(basename.split(".")[:-1])
     with open((f"{filename}.dart" if not out_file else out_file), "w") as f:
-        temple = "import 'package:drift/drift.dart';\nimport 'package:drift_flutter/drift_flutter.dart';\nimport 'package:path_provider/path_provider.dart';\n\npart '{}.g.dart';\n"
+        temple = "import 'package:drift/drift.dart';\n"
+        if use_flutter_plugin:
+            temple += "import 'package:drift_flutter/drift_flutter.dart';\n"
+        temple += "import 'package:path_provider/path_provider.dart';\n\npart '{}.g.dart';\n"
         f.write(temple.format((filename if not out_file else out_file[:-5])))
         for table_name in tables:
             table = tables[table_name]
@@ -162,5 +165,6 @@ if __name__ == "__main__":
     )
     parser.add_argument("input_file", help="the path of database file.")
     parser.add_argument("-o", "--output", help="the path of generated .dart file")
+    parser.add_argument("-f", "--flutter", help="use flutter plugin", action='store_true')
     args = parser.parse_args()
-    generateDartFile(args.input_file, args.output)
+    generateDartFile(args.input_file, args.output,args.flutter)

@@ -27,6 +27,9 @@ python sqlite2drift.py my_database.sqlite
 
 # Specify output file
 python sqlite2drift.py my_database.sqlite -o lib/database/app_db.dart
+
+# Use Flutter plugin
+python sqlite2drift.py my_database.sqlite -f
 ```
 
 ## Future Plans

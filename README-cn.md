@@ -27,6 +27,9 @@ python sqlite2drift.py my_database.sqlite
 
 # 指定输出文件
 python sqlite2drift.py my_database.sqlite -o lib/database/app_db.dart
+
+# 使用Flutter插件
+python sqlite2drift.py my_database.sqlite -f
 ```
 
 ## 未来计划
