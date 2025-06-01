@@ -169,6 +169,6 @@ if __name__ == "__main__":
         elif opt == "-o":
             out_file = arg
     if not in_file:
-        print("usage: sqlite2drift.py -i <inputfile> -o [outputfile]")
+        print("usage: sqlite2drift.py -i <inputfile> [-o outputfile]")
         exit(1)
     generateDartFile(in_file,out_file)
