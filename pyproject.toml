@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sqlite2drift"
+version = "0.0.1"
+authors = [
+  { name="Senlinjun", email="yu2755221817@163.com" },
+]
+description = "A tool that automatically converts SQLite database files into Dart files compatible with Flutter's Drift ORM."
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "MIT"
+license-files = ["LICENSE"]
+
+[project.urls]
+Homepage = "https://github.com/senlinjun/sqlite2drift"
+Issues = "https://github.com/senlinjun/sqlite2drift/issues"

@@ -23,3 +23,7 @@ venv.bak/
 .idea/
 .vscode/
 .fleet/
+
+# pypi
+dist/
+src/*.egg-info

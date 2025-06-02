@@ -1,6 +1,6 @@
 # SQLite to Drift ORM Conversion Tool
 
-![Python](https://img.shields.io/badge/Python-3.12%2B-blue)
+![Python](https://img.shields.io/badge/Python-3.7%2B-blue)
 ![Drift](https://img.shields.io/badge/Drift-ORM-green)
 
 [简体中文](README-cn.md)

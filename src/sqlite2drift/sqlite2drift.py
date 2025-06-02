@@ -15,23 +15,29 @@ sqlite_type2drift_type = {
 
 def safeUpperCamelCaseName(raw_name: str) -> str:
     formated_name = "".join(
-        [word.capitalize() for word in raw_name.replace("_", " ").split(" ")]
+        [word[0].upper() + word[1:] for word in raw_name.replace("_", " ").split(" ")]
     )
     if formated_name[0].isdigit():
         formated_name = f"_{formated_name}"
     return formated_name
 
 
-def safeCamelName(raw_name: str) -> str:
-    words = [word.capitalize() for word in raw_name.replace("_", " ").split(" ")]
-    words[0] = words[0].lower()
+def safeCamelName(raw_name: str, remove_underline=True) -> str:
+    words = []
+    for _ in raw_name.split("_") if remove_underline else [raw_name]:
+        words.extend([word[0].upper() + word[1:] for word in _.split(" ")])
+    _ = words[0]
+    words.pop(0)
+    words.insert(0, _[0].lower() + _[1:])
     formated_name = "".join(words)
     if formated_name[0].isdigit():
         formated_name = f"_{formated_name}"
     return formated_name
 
 
-def generateDartFile(db_name: str, out_file: typing.Union[str, None],use_flutter_plugin:None) -> None:
+def generateDartFile(
+    db_name: str, out_file: typing.Union[str, None], use_flutter_plugin: None
+) -> None:
     db = sqlite3.connect(db_name)
     cursor = db.cursor()
     cursor.execute("select name,sql from sqlite_master where type='table'")
@@ -84,12 +90,15 @@ def generateDartFile(db_name: str, out_file: typing.Union[str, None],use_flutter
     db.close()
 
     basename = os.path.basename(db_name)
-    filename = ".".join(basename.split(".")[:-1])
+    filename = safeCamelName(".".join(basename.split(".")[:-1]), remove_underline=False)
+    print(f"{filename}.dart" if not out_file else out_file)
     with open((f"{filename}.dart" if not out_file else out_file), "w") as f:
         temple = "import 'package:drift/drift.dart';\n"
         if use_flutter_plugin:
             temple += "import 'package:drift_flutter/drift_flutter.dart';\n"
-        temple += "import 'package:path_provider/path_provider.dart';\n\npart '{}.g.dart';\n"
+        temple += (
+            "import 'package:path_provider/path_provider.dart';\n\npart '{}.g.dart';\n"
+        )
         f.write(temple.format((filename if not out_file else out_file[:-5])))
         for table_name in tables:
             table = tables[table_name]
@@ -149,7 +158,7 @@ def generateDartFile(db_name: str, out_file: typing.Union[str, None],use_flutter
         )
         f.write(
             "  @override int get schemaVersion => 1;\n  static QueryExecutor _openConnection() {\n    return driftDatabase(\n      name: '"
-            + safeCamelName(filename)
+            + safeCamelName(filename, remove_underline=False)
             + "',\n      native: const DriftNativeOptions(\n        databaseDirectory: getApplicationSupportDirectory,\n      ),\n    );\n  }\n}"
         )
 
@@ -165,6 +174,8 @@ if __name__ == "__main__":
     )
     parser.add_argument("input_file", help="the path of database file.")
     parser.add_argument("-o", "--output", help="the path of generated .dart file")
-    parser.add_argument("-f", "--flutter", help="use flutter plugin", action='store_true')
+    parser.add_argument(
+        "-f", "--flutter", help="use flutter plugin", action="store_true"
+    )
     args = parser.parse_args()
-    generateDartFile(args.input_file, args.output,args.flutter)
+    generateDartFile(args.input_file, args.output, args.flutter)
